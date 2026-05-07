@@ -26,23 +26,34 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('transaction_id', 'created_at', 'updated_at')
 
+    def get_urls(self):
+        from django.urls import path
+        urls = super().get_urls()
+        custom_urls = [
+            path('<str:transaction_id>/<str:external_reference>/check/', self.admin_site.admin_view(self.check_transaction_status), name='check_transaction_status'),
+            path('<str:transaction_id>/<str:external_reference>/retry/', self.admin_site.admin_view(self.retry_failed_transaction), name='retry_failed_transaction'),
+            path('<str:transaction_id>/<str:external_reference>/refund/', self.admin_site.admin_view(self.initiate_refund), name='initiate_refund'),
+            path('<str:transaction_id>/<str:external_reference>/verify-refund/', self.admin_site.admin_view(self.verify_refund_status), name='verify_refund_status'),
+        ]
+        return custom_urls + urls
+
     def get_status_action_text(self, obj):
         last_status = obj.statuses.last()
         last_sibling_transaction = PaymentTransaction.objects.filter(order_id=obj.order_id).last()
         if not obj.statuses.exists():
-            return "Initiate", True, "payment:retry_failed_transaction"
+            return "Initiate", True, "admin:retry_failed_transaction"
         elif last_status.status == PaymentStatus.StatusChoices.PENDING.value:
-            return "Check", True, "payment:check_transaction_status"
+            return "Check", True, "admin:check_transaction_status"
         elif last_status.status == PaymentStatus.StatusChoices.FAILED.value and last_sibling_transaction.id == obj.id:
-            return "Retry", True, "payment:retry_failed_transaction"
+            return "Retry", True, "admin:retry_failed_transaction"
         elif last_status.status == PaymentStatus.StatusChoices.COMPLETED.value or last_status.status == PaymentStatus.StatusChoices.REFUND_FAILED:
-            return "Refund", True, "payment:initiate_refund"
+            return "Refund", True, "admin:initiate_refund"
         elif last_status.status == PaymentStatus.StatusChoices.REFUNDED.value:
             refund = PaymentRefund.objects.get(transaction=obj)
             if refund.succeeded:
                 return "✅ Refunded", False, ""
             else:
-                return "Verify", True, "payment:verify_refund_status"
+                return "Verify", True, "admin:verify_refund_status"
         else:
             return "", False, ""
 
@@ -60,7 +71,7 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
             return format_html('<h4>{}</h4>', text)
     check_status_button.short_description = 'Action'
 
-    def check_transaction_status(request, transaction_id):
+    def check_transaction_status(self, request, transaction_id, external_reference):
         transaction = PaymentTransaction.objects.get(transaction_id=transaction_id)
         payment_service = PaymentService(transaction.payment_type.payment_provider)
         success, _ = payment_service.verify_transaction(transaction.external_reference)
@@ -74,7 +85,7 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
-    def retry_failed_transaction(request, transaction_id, external_reference):
+    def retry_failed_transaction(self, request, transaction_id, external_reference):
         transaction = PaymentTransaction.objects.get(transaction_id=transaction_id)
         payment_service = PaymentService(transaction.payment_type.payment_provider)
         logger.info(f"Retrying transaction with ID: {transaction_id}")
@@ -97,7 +108,7 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
             
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
-    def initiate_refund(request, transaction_id, external_reference):
+    def initiate_refund(self, request, transaction_id, external_reference):
         transaction = PaymentTransaction.objects.get(transaction_id=transaction_id)
         payment_service = PaymentService(transaction.payment_type.payment_provider)
         try:
@@ -116,7 +127,7 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
             
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
-    def verify_refund_status(request, transaction_id, external_reference):
+    def verify_refund_status(self, request, transaction_id, external_reference):
         transaction = PaymentTransaction.objects.select_related('refund').get(transaction_id=transaction_id)
         payment_service = PaymentService(transaction.payment_type.payment_provider)
         try:
