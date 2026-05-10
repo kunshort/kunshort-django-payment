@@ -54,7 +54,7 @@ class TestInitiatePaymentWithFlutterwave:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
-            order_id="order-abc-123",
+            service="wallet",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -95,7 +95,7 @@ class TestInitiatePaymentWithFlutterwave:
                 amount_refundable=500,
                 payment_type=payment_type,
                 payment_detail={"phone_number": "670000000"},
-                order_id="order-abc-123",
+                service="wallet",
             )
 
         assert str(exc_info.value) == error_message
@@ -129,7 +129,7 @@ class TestInitiatePaymentWithFlutterwave:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
-            order_id="order-abc-123",
+            service="wallet",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -157,7 +157,7 @@ class TestInitiatePaymentWithFlutterwave:
 
         original_tx = make_fake_transaction(payment_type)
         original_tx.external_reference = "flw-tx-001"
-        original_tx.order_id = "order-abc-123"
+        original_tx.service = "wallet"
 
         fake_refund_tx = make_fake_transaction(payment_type)
         mock_db_create.return_value = fake_refund_tx
