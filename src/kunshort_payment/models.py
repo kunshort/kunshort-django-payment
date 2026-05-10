@@ -112,7 +112,7 @@ class PaymentTransaction(models.Model):
         REFUND = 'refund', 'Refund'
 
     user_id = models.CharField(max_length=255, null=True, blank=True)
-    order_id = models.CharField(max_length=255, default='')
+    service = models.CharField(max_length=255)
     coupon_id = models.CharField(max_length=255, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_refundable = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -142,7 +142,7 @@ class PaymentTransaction(models.Model):
         logger.info(f"Payment status set to PENDING - Transaction: {self.transaction_id}, Amount: {self.amount} {self.currency}")
         self.save()
         PaymentStatus.objects.create(transaction=self, status=PaymentStatus.StatusChoices.PENDING.value)
-        payment_initiated.send(sender=self.__class__, transaction=self)
+        payment_initiated.send(sender=self.__class__, transaction=self, service=self.service)
 
     def success(self):
         from kunshort_payment.signals import payment_succeeded
@@ -150,14 +150,14 @@ class PaymentTransaction(models.Model):
         with transaction.atomic():
             self.save()
             PaymentStatus.objects.create(transaction=self, status=PaymentStatus.StatusChoices.COMPLETED.value)
-        payment_succeeded.send(sender=self.__class__, transaction=self)
+        payment_succeeded.send(sender=self.__class__, transaction=self, service=self.service)
 
     def failed(self):
         from kunshort_payment.signals import payment_failed
         logger.warning(f"Payment FAILED - Transaction: {self.transaction_id}, Amount: {self.amount} {self.currency}")
         self.save()
         PaymentStatus.objects.create(transaction=self, status=PaymentStatus.StatusChoices.FAILED.value)
-        payment_failed.send(sender=self.__class__, transaction=self)
+        payment_failed.send(sender=self.__class__, transaction=self, service=self.service)
 
     def refund_initiated(self, provider_refund_id: str):
         from kunshort_payment.signals import payment_refunded
@@ -166,14 +166,14 @@ class PaymentTransaction(models.Model):
             self.save()
             PaymentRefund.objects.create(transaction=self, provider_refund_id=provider_refund_id)
             PaymentStatus.objects.create(transaction=self, status=PaymentStatus.StatusChoices.REFUNDED.value)
-        payment_refunded.send(sender=self.__class__, transaction=self, provider_refund_id=provider_refund_id)
+        payment_refunded.send(sender=self.__class__, transaction=self, service=self.service, provider_refund_id=provider_refund_id)
 
     def refund_failed(self):
         from kunshort_payment.signals import payment_refund_failed
         logger.error(f"Payment REFUND FAILED - Transaction: {self.transaction_id}, Amount: {self.amount} {self.currency}")
         self.save()
         PaymentStatus.objects.create(transaction=self, status=PaymentStatus.StatusChoices.REFUND_FAILED.value)
-        payment_refund_failed.send(sender=self.__class__, transaction=self)
+        payment_refund_failed.send(sender=self.__class__, transaction=self, service=self.service)
 
     def __str__(self):
         return f"Transaction {self.transaction_id} - {self.amount} {self.currency}"
