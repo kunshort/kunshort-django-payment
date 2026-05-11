@@ -61,7 +61,7 @@ class PaymentService:
         Raises:
             Exception: If the payment initiation fails.
         """
-        logger.info(f"Initiating payment - User: {user_id}, Amount: {amount}, Payment Type: {payment_type.name}, Reference: {reference_type}:{reference_id}")
+        logger.info(f"Initiating payment - User: {user_id}, Amount: {amount}, Provider: {self.payment_provider}, Reference: {reference_type}:{reference_id}")
 
         transaction = PaymentTransaction.objects.create(
             user_id=user_id,
