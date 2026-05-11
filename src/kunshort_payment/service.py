@@ -28,6 +28,7 @@ class PaymentService:
             payment_type=transaction.payment_type,
             payment_detail=transaction.payment_detail,
             service=transaction.service,
+            order_id=transaction.order_id,
             coupon_id=transaction.coupon_id,
         )
 
@@ -38,6 +39,7 @@ class PaymentService:
                          payment_type: PaymentType,
                          payment_detail: dict,
                          service: str,
+                         order_id: str,
                          coupon_id: str = None):
         """
         Initiates a payment transaction.
@@ -67,6 +69,7 @@ class PaymentService:
             payment_detail=payment_detail,
             coupon_id=coupon_id,
             service=service,
+            order_id=order_id,
             transaction_type=PaymentTransaction.TransactionType.COLLECTION,
         )
 

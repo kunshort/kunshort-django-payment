@@ -54,6 +54,7 @@ class TestInitiatePaymentWithFlutterwave:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
+            order_id="820230298328",
             service="wallet",
         )
 
@@ -96,6 +97,7 @@ class TestInitiatePaymentWithFlutterwave:
                 payment_type=payment_type,
                 payment_detail={"phone_number": "670000000"},
                 service="wallet",
+                order_id="039293923029",
             )
 
         assert str(exc_info.value) == error_message
@@ -130,6 +132,7 @@ class TestInitiatePaymentWithFlutterwave:
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
             service="wallet",
+            order_id="3802832323823"
         )
 
         # ── Assert ────────────────────────────────────────────────────────────

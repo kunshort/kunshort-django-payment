@@ -124,5 +124,6 @@ class TestInitiatePaymentRetry:
             payment_type=original_tx.payment_type,
             payment_detail=original_tx.payment_detail,
             service=original_tx.service,
+            order_id=original_tx.order_id,
             coupon_id=original_tx.coupon_id,
         )

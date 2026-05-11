@@ -48,6 +48,7 @@ class TestInitiatePaymentMTNCameroon:
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
             service="wallet",
+            order_id="order-mtn-001",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -88,6 +89,7 @@ class TestInitiatePaymentMTNCameroon:
                 payment_type=payment_type,
                 payment_detail={"phone_number": "670000000"},
                 service="wallet",
+                order_id="order-mtn-002",
             )
 
         assert str(exc_info.value) == error_message
@@ -122,6 +124,7 @@ class TestInitiatePaymentMTNCameroon:
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
             service="wallet",
+            order_id="order-mtn-003",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -160,6 +163,7 @@ class TestInitiatePaymentMTNCameroon:
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
             service="wallet",
+            order_id="order-mtn-004",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────

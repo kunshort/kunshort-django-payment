@@ -113,6 +113,7 @@ class PaymentTransaction(models.Model):
 
     user_id = models.CharField(max_length=255, null=True, blank=True)
     service = models.CharField(max_length=255)
+    order_id = models.CharField(max_length=255, null=True, blank=True)
     coupon_id = models.CharField(max_length=255, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_refundable = models.DecimalField(max_digits=10, decimal_places=2, default=0)
