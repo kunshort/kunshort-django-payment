@@ -5,7 +5,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -155,66 +155,3 @@ def update_momo_disbursement_transaction(request):
     except PaymentTransaction.DoesNotExist:
         logger.error(f"MTN MoMo disbursement webhook: Transaction not found for referenceId: {payload.get('referenceId')}")
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-@csrf_exempt
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def retry_failed_transaction(request, transaction_id):
-
-    try:
-        transaction = PaymentTransaction.objects.get(transaction_id=transaction_id, user_id=request.user.id)
-        payment_service = PaymentService(transaction.payment_type.payment_provider)
-        logger.info(f"Retrying transaction with ID: {transaction_id}")
-        success, _ = payment_service.verify_transaction(transaction_id)
-        
-        if not hasattr(_, "status") or _["status"] != payment_service.provider.status.ACCEPTED.value:
-            success, _, _ = payment_service.initiate_payment_retry(transaction)
-            if success:
-                return Response({}, status=status.HTTP_200_OK)
-            else:
-                logger.info(f"Retrying payment was not successful | {_}")
-        logger.info(f"Transaction for {transaction_id} completed | {_}")
-        return Response({}, status=status.HTTP_200_OK)
-        
-    except Exception as ex:
-        logger.exception(ex)
-        transaction.failed()
-        return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-    except PaymentTransaction.DoesNotExist:
-        logger.info(f"User with ID {request.user.id} attempted retry payment get transaction {transaction_id} that doesn't own")
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def check_transaction_status(request, transaction_id):
-    logger.info(f"Transaction status check requested - User: {request.user.id}, Transaction: {transaction_id}")
-
-    try:
-        transaction = PaymentTransaction.objects.get(user_id=request.user.id, transaction_id=transaction_id)
-
-        # Get the current status
-        latest_status = transaction.statuses.order_by('-created_at').first()
-        current_status = latest_status.status if latest_status else None
-
-        logger.debug(f"Transaction {transaction_id} current status: {current_status}")
-
-        payment_service = PaymentService(transaction.payment_type.payment_provider)
-        success, verification_data = payment_service.verify_transaction(transaction.external_reference)
-
-        if success and verification_data["status"] == payment_service.provider.status.COMPLETED.value:
-            logger.info(f"Transaction {transaction_id} is COMPLETED")
-            # Only call success() if not already completed
-            if current_status != PaymentStatus.StatusChoices.COMPLETED.value:
-                transaction.success()
-            return Response({"status": "COMPLETED"})
-        elif success and verification_data["status"] == payment_service.provider.status.PENDING.value:
-            logger.info(f"Transaction {transaction_id} is PENDING")
-            return Response({"status": "PENDING"})
-        else:
-            logger.warning(f"Transaction {transaction_id} is FAILED - Status: {verification_data.get('status')}")
-            return Response({"status": "FAILED"})
-
-    except PaymentTransaction.DoesNotExist:
-        logger.warning(f"Transaction status check failed - Transaction {transaction_id} not found for user {request.user.id}")
-        return Response(status=status.HTTP_400_BAD_REQUEST) 
