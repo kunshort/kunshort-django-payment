@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-05-11
+
+### Added
+
+- `reference_id` parameter to `initiate_disbursement()` and `initiate_refund()`.
+- Makefile with `test`, `build`, `publish`, and `clean` targets.
+
 ## [0.2.0] - 2026-05-11
 
 ### Changed (BREAKING)
