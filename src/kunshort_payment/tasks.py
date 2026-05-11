@@ -66,7 +66,7 @@ def poll_momo_transaction(self, transaction_id: str):
         f"{transaction_id} (attempt {self.request.retries + 1}/{_MOMO_POLL_MAX_RETRIES + 1})"
     )
 
-    payment_service = PaymentService(txn.payment_type.payment_provider)
+    payment_service = PaymentService(txn.provider)
 
     if txn.transaction_type == PaymentTransaction.TransactionType.COLLECTION:
         success, verification_data = payment_service.verify_transaction(txn.external_reference)
