@@ -160,10 +160,10 @@ def update_momo_disbursement_transaction(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def retry_failed_transaction(request, transaction_id):
-    payment_service = PaymentService()
 
     try:
-        transaction = PaymentTransaction.objects.get(transaction_id=transaction_id, user=request.user)
+        transaction = PaymentTransaction.objects.get(transaction_id=transaction_id, user_id=request.user.id)
+        payment_service = PaymentService(transaction.payment_type.payment_provider)
         logger.info(f"Retrying transaction with ID: {transaction_id}")
         success, _ = payment_service.verify_transaction(transaction_id)
         
@@ -191,7 +191,7 @@ def check_transaction_status(request, transaction_id):
     logger.info(f"Transaction status check requested - User: {request.user.id}, Transaction: {transaction_id}")
 
     try:
-        transaction = PaymentTransaction.objects.get(user=request.user, transaction_id=transaction_id)
+        transaction = PaymentTransaction.objects.get(user_id=request.user.id, transaction_id=transaction_id)
 
         # Get the current status
         latest_status = transaction.statuses.order_by('-created_at').first()
@@ -199,7 +199,7 @@ def check_transaction_status(request, transaction_id):
 
         logger.debug(f"Transaction {transaction_id} current status: {current_status}")
 
-        payment_service = PaymentService()
+        payment_service = PaymentService(transaction.payment_type.payment_provider)
         success, verification_data = payment_service.verify_transaction(transaction.external_reference)
 
         if success and verification_data["status"] == payment_service.provider.status.COMPLETED.value:
