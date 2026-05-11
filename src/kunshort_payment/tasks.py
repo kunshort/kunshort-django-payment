@@ -49,6 +49,7 @@ def poll_momo_transaction(self, transaction_id: str):
 
     # 2. Idempotency guard — stop if already resolved
     latest_status = txn.statuses.order_by('-created_at').values_list('status', flat=True).first()
+    logger.info(f"poll_momo_transaction: {transaction_id} latest_status={latest_status}")
 
     if latest_status in (
         PaymentStatus.StatusChoices.COMPLETED.value,
