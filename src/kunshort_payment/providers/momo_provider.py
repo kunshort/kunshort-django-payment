@@ -129,7 +129,7 @@ class MomoProvider(MobileMoneyProvider):
         self.success_status = MomoOmoDepositStatus.SUCCESSFUL.value
         self.pending_status = MomoOmoDepositStatus.PENDING.value
 
-    def _collect(self, number: str, amount: float, tx_ref: str):
+    def _collect(self, number: str, amount: str, tx_ref: str):
         try:
             reference_id = str(uuid.uuid4())
 
