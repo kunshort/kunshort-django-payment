@@ -179,6 +179,7 @@ class TestInitiatePaymentWithPawapay:
             amount="500",
             payment_type=payment_type,
             reference_type="wallet",
+            reference_id="pawa-disb-001",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -215,6 +216,7 @@ class TestInitiatePaymentWithPawapay:
                 amount="500",
                 payment_type=payment_type,
                 reference_type="wallet",
+                reference_id="pawa-disb-002",
             )
 
         assert str(exc_info.value) == "Insufficient balance"

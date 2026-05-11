@@ -50,6 +50,7 @@ class TestInitiateDisbursement:
             amount="500",
             payment_type=payment_type,
             reference_type="wallet",
+            reference_id="disb-ref-001",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -90,6 +91,7 @@ class TestInitiateDisbursement:
                 amount="500",
                 payment_type=payment_type,
                 reference_type="wallet",
+                reference_id="disb-ref-002",
             )
 
         assert str(exc_info.value) == error_message
@@ -124,6 +126,7 @@ class TestInitiateDisbursement:
             amount="500",
             payment_type=payment_type,
             reference_type="wallet",
+            reference_id="disb-ref-001",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -160,6 +163,7 @@ class TestInitiateDisbursement:
             amount="500",
             payment_type=payment_type,
             reference_type="wallet",
+            reference_id="disb-ref-001",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────

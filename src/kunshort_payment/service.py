@@ -17,6 +17,7 @@ class PaymentService:
         return cls._instances[provider]
 
     def __init__(self, provider: SupportedProviders):
+        self.payment_provider = settings.PROVIDERS[provider.upper()]
         self.provider = PaymentProviderFactory.get_instance(settings.PROVIDERS[provider.upper()])
 
     def initiate_payment_retry(self, transaction: PaymentTransaction):
@@ -71,6 +72,7 @@ class PaymentService:
             coupon_id=coupon_id,
             reference_type=reference_type,
             reference_id=reference_id,
+            provider=self.payment_provider,
             transaction_type=PaymentTransaction.TransactionType.COLLECTION,
         )
 
@@ -110,6 +112,7 @@ class PaymentService:
                              phone_number: str,
                              amount: str,
                              payment_type: PaymentType,
+                             reference_id: str,
                              reference_type: str):
         """
         Initiates a disbursement (payout) transaction.
@@ -142,7 +145,9 @@ class PaymentService:
             amount_refundable=0,
             payment_type=payment_type,
             payment_detail={"phone_number": phone_number},
+            reference_id=reference_id,
             reference_type=reference_type,
+            provider=self.payment_provider,
             transaction_type=PaymentTransaction.TransactionType.DISBURSEMENT,
         )
 
@@ -223,6 +228,8 @@ class PaymentService:
             payment_type=original_transaction.payment_type,
             payment_detail=original_transaction.payment_detail,
             reference_type=original_transaction.reference_type,
+            reference_id=original_transaction.reference_id,
+            provider=self.payment_provider,
             transaction_type=PaymentTransaction.TransactionType.REFUND,
         )
 
