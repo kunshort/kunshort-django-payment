@@ -27,9 +27,9 @@ def make_fake_transaction(payment_type):
     tx.amount_refundable = 500
     tx.payment_type = payment_type
     tx.payment_detail = {"phone_number": "670000000"}
-    tx.service = "wallet"
+    tx.reference_type = "wallet"
     tx.coupon_id = None
-    tx.order_id = None
+    tx.reference_id = None
     tx.user_id = "user-xyz-456"
     tx.pending = MagicMock()
     tx.failed = MagicMock()

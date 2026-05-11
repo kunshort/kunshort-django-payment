@@ -22,7 +22,8 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'user_id',
-            'service',
+            'reference_type',
+            'reference_id',
             'coupon_id',
             'amount',
             'amount_refundable',

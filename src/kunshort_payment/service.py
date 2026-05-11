@@ -27,8 +27,8 @@ class PaymentService:
             amount_refundable=transaction.amount_refundable,
             payment_type=transaction.payment_type,
             payment_detail=transaction.payment_detail,
-            service=transaction.service,
-            order_id=transaction.order_id,
+            reference_type=transaction.reference_type,
+            reference_id=transaction.reference_id,
             coupon_id=transaction.coupon_id,
         )
 
@@ -38,8 +38,8 @@ class PaymentService:
                          amount_refundable: float,
                          payment_type: PaymentType,
                          payment_detail: dict,
-                         service: str,
-                         order_id: str,
+                         reference_type: str,
+                         reference_id: str,
                          coupon_id: str = None):
         """
         Initiates a payment transaction.
@@ -50,7 +50,8 @@ class PaymentService:
             amount_refundable (float): The amount that can be refunded.
             payment_type (PaymentType): The type of payment being processed.
             payment_detail (dict): Payment details including phone number for mobile payments.
-            service (str): The purpose of this transaction (e.g. "wallet", "market_list").
+            reference_type (str): The type of object this payment is for (e.g. "wallet", "order").
+            reference_id (str): The ID of the object this payment is for.
             coupon_id (str, optional): ID of the coupon applied, if any.
 
         Returns:
@@ -59,7 +60,7 @@ class PaymentService:
         Raises:
             Exception: If the payment initiation fails.
         """
-        logger.info(f"Initiating payment - User: {user_id}, Amount: {amount}, Payment Type: {payment_type.name}, Service: {service}")
+        logger.info(f"Initiating payment - User: {user_id}, Amount: {amount}, Payment Type: {payment_type.name}, Reference: {reference_type}:{reference_id}")
 
         transaction = PaymentTransaction.objects.create(
             user_id=user_id,
@@ -68,8 +69,8 @@ class PaymentService:
             payment_type=payment_type,
             payment_detail=payment_detail,
             coupon_id=coupon_id,
-            service=service,
-            order_id=order_id,
+            reference_type=reference_type,
+            reference_id=reference_id,
             transaction_type=PaymentTransaction.TransactionType.COLLECTION,
         )
 
@@ -109,7 +110,7 @@ class PaymentService:
                              phone_number: str,
                              amount: str,
                              payment_type: PaymentType,
-                             service: str):
+                             reference_type: str):
         """
         Initiates a disbursement (payout) transaction.
 
@@ -122,7 +123,7 @@ class PaymentService:
             phone_number (str): Phone number to disburse to (without country code).
             amount (str): Amount to disburse as a string (MTN API requires string).
             payment_type (PaymentType): The PaymentType record for MTN disbursement.
-            service (str): The purpose of this disbursement (e.g. "wallet", "market_list").
+            reference_type (str): The type of object this disbursement is for (e.g. "wallet", "order").
 
         Returns:
             tuple: (success: bool, message: str, transaction: PaymentTransaction)
@@ -132,7 +133,7 @@ class PaymentService:
         """
         logger.info(
             f"Initiating disbursement - User: {user_id}, Phone: {phone_number}, "
-            f"Amount: {amount}, Service: {service}"
+            f"Amount: {amount}, Reference Type: {reference_type}"
         )
 
         transaction = PaymentTransaction.objects.create(
@@ -141,7 +142,7 @@ class PaymentService:
             amount_refundable=0,
             payment_type=payment_type,
             payment_detail={"phone_number": phone_number},
-            service=service,
+            reference_type=reference_type,
             transaction_type=PaymentTransaction.TransactionType.DISBURSEMENT,
         )
 
@@ -198,7 +199,7 @@ class PaymentService:
             user_id (str): ID of the user being refunded.
             original_transaction (PaymentTransaction): The original collection transaction
                 being refunded. Provides the external_reference MTN needs, the payment_type,
-                and the service tag for linking.
+                and the reference_type for linking.
             amount (str): Amount to refund as a string.
 
         Returns:
@@ -213,15 +214,15 @@ class PaymentService:
         )
 
         # Create a new transaction record for this refund.
-        # We link it to the same order as the original so you can see
-        # the full payment history for an order in one place.
+        # We link it to the same reference as the original so you can see
+        # the full payment history for a reference in one place.
         transaction = PaymentTransaction.objects.create(
             user_id=user_id,
             amount=amount,
             amount_refundable=0,
             payment_type=original_transaction.payment_type,
             payment_detail=original_transaction.payment_detail,
-            service=original_transaction.service,
+            reference_type=original_transaction.reference_type,
             transaction_type=PaymentTransaction.TransactionType.REFUND,
         )
 

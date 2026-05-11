@@ -47,8 +47,8 @@ class TestInitiatePaymentMTNCameroon:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
-            service="wallet",
-            order_id="order-mtn-001",
+            reference_type="wallet",
+            reference_id="order-mtn-001",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -88,8 +88,8 @@ class TestInitiatePaymentMTNCameroon:
                 amount_refundable=500,
                 payment_type=payment_type,
                 payment_detail={"phone_number": "670000000"},
-                service="wallet",
-                order_id="order-mtn-002",
+                reference_type="wallet",
+                reference_id="order-mtn-002",
             )
 
         assert str(exc_info.value) == error_message
@@ -123,8 +123,8 @@ class TestInitiatePaymentMTNCameroon:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
-            service="wallet",
-            order_id="order-mtn-003",
+            reference_type="wallet",
+            reference_id="order-mtn-003",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -162,8 +162,8 @@ class TestInitiatePaymentMTNCameroon:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
-            service="wallet",
-            order_id="order-mtn-004",
+            reference_type="wallet",
+            reference_id="order-mtn-004",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────

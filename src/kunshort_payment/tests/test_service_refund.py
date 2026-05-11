@@ -14,7 +14,7 @@ def make_original_transaction():
     payment_type = make_fake_payment_type()
     tx = make_fake_transaction(payment_type)
     tx.external_reference = "original-mtn-ref-001"
-    tx.service = "wallet"
+    tx.reference_type = "wallet"
     return tx
 
 
@@ -150,16 +150,16 @@ class TestInitiateRefund:
         """
         GIVEN   an original transaction belonging to "order-abc-123"
         WHEN    initiate_refund creates a new DB row
-        THEN    that row also has service = "wallet" and type REFUND
+        THEN    that row also has reference_type = "wallet" and type REFUND
 
-        WHY: linking them lets you see the full payment history for an order.
+        WHY: linking them lets you see the full payment history for a reference.
         """
         # ── Arrange ──────────────────────────────────────────────────────────
         fake_provider = MagicMock()
         fake_provider.initiate_refund.return_value = (True, "ref")
 
         original_tx = make_original_transaction()
-        original_tx.service = "wallet"
+        original_tx.reference_type = "wallet"
 
         fake_refund_tx = make_fake_transaction(original_tx.payment_type)
         mock_db_create.return_value = fake_refund_tx
@@ -175,5 +175,5 @@ class TestInitiateRefund:
 
         # ── Assert ────────────────────────────────────────────────────────────
         _, create_kwargs = mock_db_create.call_args
-        assert create_kwargs["service"] == "wallet"
+        assert create_kwargs["reference_type"] == "wallet"
         assert create_kwargs["transaction_type"] == PaymentTransaction.TransactionType.REFUND

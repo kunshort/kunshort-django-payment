@@ -61,8 +61,8 @@ class TestInitiatePaymentWithPawapay:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
-            service="wallet",
-            order_id="order-pawa-001",
+            reference_type="wallet",
+            reference_id="order-pawa-001",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -104,8 +104,8 @@ class TestInitiatePaymentWithPawapay:
                 amount_refundable=500,
                 payment_type=payment_type,
                 payment_detail={"phone_number": "670000000"},
-                service="wallet",
-                order_id="order-pawa-002",
+                reference_type="wallet",
+                reference_id="order-pawa-002",
             )
 
         assert str(exc_info.value) == error_message
@@ -142,8 +142,8 @@ class TestInitiatePaymentWithPawapay:
             amount_refundable=500,
             payment_type=payment_type,
             payment_detail={"phone_number": "670000000"},
-            service="wallet",
-            order_id="order-pawa-003",
+            reference_type="wallet",
+            reference_id="order-pawa-003",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -178,7 +178,7 @@ class TestInitiatePaymentWithPawapay:
             phone_number="670000000",
             amount="500",
             payment_type=payment_type,
-            service="wallet",
+            reference_type="wallet",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -214,7 +214,7 @@ class TestInitiatePaymentWithPawapay:
                 phone_number="670000000",
                 amount="500",
                 payment_type=payment_type,
-                service="wallet",
+                reference_type="wallet",
             )
 
         assert str(exc_info.value) == "Insufficient balance"

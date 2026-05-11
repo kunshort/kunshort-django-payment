@@ -105,7 +105,7 @@ class TestInitiatePaymentRetry:
         original_tx.amount = 500
         original_tx.amount_refundable = 500
         original_tx.payment_detail = {"phone_number": "670000000"}
-        original_tx.service = "wallet"
+        original_tx.reference_type = "wallet"
         original_tx.coupon_id = None
 
         service = build_service(mock_factory, mock_settings, fake_provider)
@@ -123,7 +123,7 @@ class TestInitiatePaymentRetry:
             amount_refundable=original_tx.amount_refundable,
             payment_type=original_tx.payment_type,
             payment_detail=original_tx.payment_detail,
-            service=original_tx.service,
-            order_id=original_tx.order_id,
+            reference_type=original_tx.reference_type,
+            reference_id=original_tx.reference_id,
             coupon_id=original_tx.coupon_id,
         )

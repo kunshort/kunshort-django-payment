@@ -49,7 +49,7 @@ class TestInitiateDisbursement:
             phone_number="670000000",
             amount="500",
             payment_type=payment_type,
-            service="wallet",
+            reference_type="wallet",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -89,7 +89,7 @@ class TestInitiateDisbursement:
                 phone_number="670000000",
                 amount="500",
                 payment_type=payment_type,
-                service="wallet",
+                reference_type="wallet",
             )
 
         assert str(exc_info.value) == error_message
@@ -123,7 +123,7 @@ class TestInitiateDisbursement:
             phone_number="670000000",
             amount="500",
             payment_type=payment_type,
-            service="wallet",
+            reference_type="wallet",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ class TestInitiateDisbursement:
             phone_number="670000000",
             amount="500",
             payment_type=payment_type,
-            service="wallet",
+            reference_type="wallet",
         )
 
         # ── Assert ────────────────────────────────────────────────────────────
