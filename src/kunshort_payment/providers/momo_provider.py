@@ -134,7 +134,7 @@ class MomoProvider(MobileMoneyProvider):
             reference_id = str(uuid.uuid4())
 
             data = {
-                "amount": str(amount),
+                "amount": amount,
                 "currency": "EUR",
                 "externalId": tx_ref,
                 "payer": {

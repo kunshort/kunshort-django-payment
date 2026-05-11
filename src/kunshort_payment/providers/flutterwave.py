@@ -39,7 +39,7 @@ class FlutterWaveProvider(MobileMoneyProvider):
         try:
             data = {
                 "phone_number": f"237{clean_phone_number(number)}",
-                "amount": float(amount),
+                "amount": amount,
                 "currency": "XAF",
                 "country": country,
                 "email": "customer@kunshort.com",
