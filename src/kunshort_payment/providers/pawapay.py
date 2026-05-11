@@ -67,12 +67,12 @@ class PawapayProvider(MobileMoneyProvider):
                                   self._get_country_and_correspondent(number)[1])
 
 
-    def mobile_money(self, number, amount: str, tx_ref, country, correspondent):
+    def mobile_money(self, number, amount: float, tx_ref, country, correspondent):
         try:
             from datetime import datetime, timezone
             data = {
                 "depositId": tx_ref,
-                "amount": amount,
+                "amount": str(int(round(float(amount)))),
                 "currency": "XAF",
                 "correspondent": correspondent,
                 "payer": {
