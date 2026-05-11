@@ -72,7 +72,7 @@ class PawapayProvider(MobileMoneyProvider):
             from datetime import datetime, timezone
             data = {
                 "depositId": tx_ref,
-                "amount": amount,
+                "amount": str(amount),
                 "currency": "XAF",
                 "correspondent": correspondent,
                 "payer": {

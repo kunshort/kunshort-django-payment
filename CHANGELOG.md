@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2026-05-11
+
+### Fixed
+
+- `Decimal` amount serialization error in PawaPay provider.
+
+### Added
+
+- GitHub Actions workflow to create releases automatically on push to main.
+- GitHub Actions workflow to publish to PyPI on release.
+
 ## [0.2.1] - 2026-05-11
 
 ### Added
